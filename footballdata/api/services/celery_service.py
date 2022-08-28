@@ -1,3 +1,5 @@
+import datetime
+
 from celery import Task
 
 from footballdata.api.models.celery_models import CeleryTask
@@ -38,3 +40,15 @@ class CallbackTask(Task):
 
 def create_celery_task(task_id, task_name):
     return CeleryTask.objects.create(task_id=task_id, task_name=task_name, status=CeleryTask.PENDING)
+
+
+def exists_active_task(task_name, time_span=None) -> tuple[bool, str | None]:
+    time_span = time_span or datetime.datetime.now() - datetime.timedelta(minutes=2)
+    active_task = (
+        CeleryTask.objects.filter(
+            task_name=task_name, status__in=[CeleryTask.PENDING, CeleryTask.RECEIVED, CeleryTask.STARTED, CeleryTask.RETRY]
+        )
+        .exclude(created__lt=time_span)
+        .first()
+    )
+    return active_task is not None, active_task.task_id if active_task else None
