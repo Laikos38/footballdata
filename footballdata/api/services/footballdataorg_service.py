@@ -3,5 +3,5 @@ FOOTBALLDATAORG_COMPETITION_URL = FOOTBALLDATAORG_BASE_URL + "competitions/"
 FOOTBALLDATAORG_TEAMS_URL = FOOTBALLDATAORG_BASE_URL + "teams/"
 
 
-def import_competition():
+def import_competition(league_code: str):
     raise NotImplementedError()
