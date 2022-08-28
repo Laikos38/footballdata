@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from footballdata.api.models.footballdata_models import Player
+from footballdata.api.models.footballdata_models import Coach, Player, Team
 
 
 class CompetitionJSONSerializer(serializers.Serializer):
@@ -60,4 +60,25 @@ class TeamJSONSerializer(serializers.Serializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
+        fields = "__all__"
+
+
+class CoachSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coach
+        fields = "__all__"
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = "__all__"
+
+
+class TeamWithPlayersAndCoachSerializer(serializers.ModelSerializer):
+    players = PlayerSerializer(many=True)
+    coaches = CoachSerializer()
+
+    class Meta:
+        model = Team
         fields = "__all__"
