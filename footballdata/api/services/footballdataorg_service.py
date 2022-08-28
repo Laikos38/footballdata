@@ -35,7 +35,7 @@ class FootballDataOrgService:
             break
         return response
 
-    def import_competition(self, league_code: str):
+    def import_competition(self, league_code: str, update_existing_instances=False):
         league_code = league_code.upper()
         try:
             competition_response = self.request(f"{FOOTBALLDATAORG_BASE_URL}/competitions/{league_code}")
@@ -57,7 +57,7 @@ class FootballDataOrgService:
                     code=competition.validated_data.get("code"),
                     fd_id=competition.validated_data.get("fd_id"),
                 )
-            else:
+            elif update_existing_instances:
                 competition_instance.name = competition.validated_data.get("name")
                 competition_instance.area_name = competition.validated_data.get("area_name")
                 competition_instance.code = competition.validated_data.get("code")
@@ -66,7 +66,9 @@ class FootballDataOrgService:
             for team in teams.validated_data:
                 try:
                     team_instance = Team.objects.filter(fd_id=team.get("fd_id")).first()
+                    ignore_coach_players = True
                     if not team_instance:
+                        ignore_coach_players = False
                         team_instance = Team.objects.create(
                             name=team.get("name"),
                             tla=team.get("tla"),
@@ -75,7 +77,8 @@ class FootballDataOrgService:
                             address=team.get("address"),
                             fd_id=team.get("fd_id"),
                         )
-                    else:
+                    elif update_existing_instances:
+                        ignore_coach_players = False
                         team_instance.name = team.get("name")
                         team_instance.tla = team.get("tla")
                         team_instance.short_name = team.get("short_name")
@@ -84,6 +87,8 @@ class FootballDataOrgService:
                         team_instance.fd_id = team.get("fd_id")
                         team_instance.save()
                     team_instances.append(team_instance)
+                    if ignore_coach_players:
+                        continue
                     coach_instance = Coach.objects.filter(team=team_instance).first()
                     coach_data = team.get("coach")
                     if not coach_instance:
@@ -94,7 +99,7 @@ class FootballDataOrgService:
                             fd_id=coach_data.get("fd_id"),
                             team=team_instance,
                         )
-                    else:
+                    elif update_existing_instances:
                         coach_instance.name = coach_data.get("name")
                         coach_instance.date_of_birth = coach_data.get("date_of_birth")
                         coach_instance.nationality = coach_data.get("nationality")
@@ -114,7 +119,7 @@ class FootballDataOrgService:
                                 fd_id=player.get("fd_id"),
                                 team=team_instance,
                             )
-                        else:
+                        elif update_existing_instances:
                             player_instance.name = player.get("name")
                             player_instance.position = player.get("position")
                             player_instance.date_of_birth = player.get("date_of_birth")
