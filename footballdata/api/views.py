@@ -1,6 +1,10 @@
+from rest_framework import generics
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from footballdata.api.models.footballdata_models import Competition, Player
+from footballdata.api.serializers.footballdata_serializers import PlayerSerializer
 from footballdata.api.services.celery_service import exists_active_task
 from footballdata.api.services.footballdataorg_service import FootballDataOrgService
 from footballdata.api.tasks import ImportLeagueTask
@@ -20,3 +24,18 @@ def import_league(request, league_code: str):
         service = FootballDataOrgService()
         result, message = service.import_competition(league_code)
         return Response(message, 201 if result else 500)
+
+
+class CompetitionPlayersList(generics.ListAPIView):
+    serializer_class = PlayerSerializer
+
+    def get_queryset(self):
+        league_code = self.kwargs.get("league_code").upper()
+        if not Competition.objects.filter(code=league_code).exists():
+            raise NotFound("League not found.")
+        queryset = Player.objects.get_queryset()
+        queryset = queryset.filter(team__competitions__code=league_code)
+        team_name = self.request.GET.get("team_name", None)
+        if team_name:
+            queryset = queryset.filter(team__name__icontains=team_name)
+        return queryset

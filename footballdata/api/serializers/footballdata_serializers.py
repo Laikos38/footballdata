@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from footballdata.api.models.footballdata_models import Player
+
 
 class CompetitionJSONSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=500)
@@ -53,3 +55,9 @@ class TeamJSONSerializer(serializers.Serializer):
         initial_data["short_name"] = initial_data.get("shortName", None)
         initial_data["fd_id"] = initial_data.get("id", None)
         return super().to_internal_value(initial_data)
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = "__all__"
