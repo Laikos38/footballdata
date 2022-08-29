@@ -26,7 +26,7 @@ docker-compose -f docker-compose.dev.yaml up --build
 ## Endpoints
 
 ### 1. Import league/competition
-`http:localhost:7171/api/import-league/<str:league_code>/`
+`http://localhost:7171/api/import-league/<str:league_code>/`
 
 Import league data from Football-data.org (competition, teams, players, coaches).
 
@@ -37,7 +37,7 @@ Leagues/competitions avalaible in free plan of Football-data.org for testing:
 `BSA PL ELC CL EC FL1 SA DED PPL CLI PD WC`
 
 ### 2. League/competition players
-`http:localhost:7171/api/competitions/<str:league_code>/players/`
+`http://localhost:7171/api/competitions/<str:league_code>/players/`
 
 Imported players participating in the given league/competition.
 
@@ -45,7 +45,7 @@ Params:
 - **team_name**: str
 
 ### 3. Teams
-`http:localhost:7171/api/teams/`
+`http://localhost:7171/api/teams/`
 
 Imported teams.
 
@@ -54,7 +54,7 @@ Params:
 - **include_players**: bool - default `false`
 
 ### 4. Players or coaches of a team
-`http:localhost:7171/api/teams/players-or-coaches/`
+`http://localhost:7171/api/teams/players-or-coaches/`
 
 Imported players or coaches of a given team name.
 
