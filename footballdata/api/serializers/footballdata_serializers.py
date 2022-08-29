@@ -82,3 +82,12 @@ class TeamWithPlayersAndCoachSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = "__all__"
+
+
+class PlayersAndCoachOfTeamSerializer(serializers.ModelSerializer):
+    players = PlayerSerializer(many=True)
+    coaches = CoachSerializer()
+
+    class Meta:
+        model = Team
+        fields = ("players", "coaches")

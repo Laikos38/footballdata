@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from footballdata.api.models.footballdata_models import Competition, Player, Team
 from footballdata.api.serializers.footballdata_serializers import (
+    PlayersAndCoachOfTeamSerializer,
     PlayerSerializer,
     TeamSerializer,
     TeamWithPlayersAndCoachSerializer,
@@ -60,3 +61,15 @@ class TeamsByName(generics.ListAPIView):
         if include_players is True:
             return TeamWithPlayersAndCoachSerializer
         return TeamSerializer
+
+
+class TeamPlayersOrCoaches(generics.ListAPIView):
+    serializer_class = PlayersAndCoachOfTeamSerializer
+
+    def get_queryset(self):
+        name = self.request.GET.get("name", None)
+        if not name:
+            return Team.objects.none()
+        queryset = Team.objects.get_queryset()
+        queryset = queryset.all().filter(name__icontains=name)
+        return queryset
