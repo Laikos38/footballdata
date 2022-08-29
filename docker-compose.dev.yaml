@@ -16,14 +16,8 @@ services:
     entrypoint: "/usr/src/app/scripts/entrypoint.sh"
     volumes:
       - .:/usr/src/app
-    environment:
-      - DB_HOST=footballdata_db
-      - DB_PORT=5432
-      - DB_NAME=footballdata
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - CELERY_BROKER_URL=redis://redis:6379
-      - CELERY_RESULT_BACKEND=redis://redis:6379
+    env_file:
+      - ./.env
     depends_on:
       - footballdata_db
       - redis
@@ -41,14 +35,8 @@ services:
     command: celery -A footballdata worker -l info
     volumes:
       - .:/usr/src/app
-    environment:
-      - DB_HOST=footballdata_db
-      - DB_PORT=5432
-      - DB_NAME=footballdata
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - CELERY_BROKER_URL=redis://redis:6379
-      - CELERY_RESULT_BACKEND=redis://redis:6379
+    env_file:
+      - ./.env
     depends_on:
       - footballdata_db
       - redis
