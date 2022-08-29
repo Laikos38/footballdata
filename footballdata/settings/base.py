@@ -126,5 +126,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 FOOTBALLDATAORG_API_KEY = os.environ.get("FOOTBALL_DATA_ORG_API_KEY", "")
 
 # Celery - Redis
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
